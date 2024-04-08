@@ -1,0 +1,54 @@
+Resources:
+  Pipeline:
+    Type: AWS::CodePipeline::Pipeline
+    Properties:
+      RoleArn: <your-pipeline-role-arn>
+      ArtifactStore:
+        Type: S3
+        Location: <your-s3-bucket-name>
+      Stages:
+        - Name: Source
+          Actions:
+            - Name: SourceAction
+              ActionTypeId:
+                Category: Source
+                Owner: ThirdParty
+                Version: 1
+                Provider: GitHub
+              Configuration:
+                Owner: <github-owner>
+                Repo: <github-repo>
+                Branch: master
+                OAuthToken: <github-oauth-token>
+              OutputArtifacts:
+                - Name: SourceOutput
+              RunOrder: 1
+        - Name: Build
+          Actions:
+            - Name: BuildAction
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Version: 1
+                Provider: CodeBuild
+              Configuration:
+                ProjectName: <your-codebuild-project-name>
+              InputArtifacts:
+                - Name: SourceOutput
+              OutputArtifacts:
+                - Name: BuildOutput
+              RunOrder: 1
+        - Name: Deploy
+          Actions:
+            - Name: DeployAction
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: EKS
+              Configuration:
+                ClusterName: <your-eks-cluster-name>
+                Namespace: <namespace-to-deploy-to>
+                InputArtifacts:
+                  - Name: BuildOutput
+              RunOrder: 1
