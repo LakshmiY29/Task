@@ -2,6 +2,9 @@
 Creating a reference architecture for deploying a custom WooCommerce-based product on AWS using TypeScript CDK for a three-tier application with container technology and AWS Pipeline involves several components. Below is a high-level architecture diagram and 
 guide the deployment process.
 
+
+
+
 Architecture Components:
 Load Balancer:
 
